@@ -304,7 +304,7 @@ module.exports = app => {
 
 
 
-
+        // 第二张方式
         // let jsons = getToken();
         // // 查询openid
         // pool.getConnection((err, connection) => {
