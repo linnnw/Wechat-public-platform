@@ -243,33 +243,34 @@ module.exports = app => {
     router.post('/sendMsg', (req, res) => {
         let opid = 'xxxx';   // openid
         let jsons = getToken();
-        request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${jsons.token.access_token}&openid=${opid}&lang=zh_CN`, (error, response, body) => {
-            let bd = JSON.parse(body);
-            console.log('bd.subscribe :', bd.subscribe);
-            if (bd.subscribe == 1) {
-                let requestData = {
-                    "touser": opid,
-                    "template_id": "jsGHi1mEDpMReqCpqG7pxTCJm6hcjYYK5XMm5CccDKM",
-                    "data": {
-                        "first": {
-                            "value": "预警",
-                            "color": "#173177"
-                        },
-                        "device": {
-                            "value": "打印机",
-                            "color": "#173177"
-                        },
-                        "time": {
-                            "value": showTime(),
-                            "color": "#173177"
-                        },
-                        "remark": {
-                            "value": showTime(),
-                            "color": "#173177"
+        if (!isEmpty(jsons)) {
+            request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${jsons.token.access_token}&openid=${opid}&lang=zh_CN`, (error, response, body) => {
+                let bd = JSON.parse(body);
+                console.log('bd.subscribe :', bd.subscribe);
+                if (bd.subscribe == 1) {
+                    let requestData = {
+                        "touser": opid,
+                        "template_id": "jsGHi1mEDpMReqCpqG7pxTCJm6hcjYYK5XMm5CccDKM",
+                        "data": {
+                            "first": {
+                                "value": "预警",
+                                "color": "#173177"
+                            },
+                            "device": {
+                                "value": "打印机",
+                                "color": "#173177"
+                            },
+                            "time": {
+                                "value": showTime(),
+                                "color": "#173177"
+                            },
+                            "remark": {
+                                "value": showTime(),
+                                "color": "#173177"
+                            }
                         }
                     }
-                }
-                if (!isEmpty(jsons)) {
+
                     request({
                         url: `https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${jsons.token.access_token}`,
                         method: "POST",
@@ -284,20 +285,21 @@ module.exports = app => {
                             msg: '发送成功'
                         });
                     });
+
                 } else {
                     res.send({
                         status: 500,
-                        msg: 'jsons为空'
-                    });
+                        msg: '该用户未关注公众号'
+                    })
                 }
-            } else {
-                res.send({
-                    status: 500,
-                    msg: '该用户未关注公众号'
-                })
-            }
-        })
+            })
 
+        } else {
+            res.send({
+                status: 500,
+                msg: 'jsons为空'
+            })
+        }
 
 
 
