@@ -5,7 +5,7 @@ module.exports = app => {
     const request = require('request');
     const fs = require('fs'); // 引入fs更新本地文件
     let configJson = require('../data/config.json')
-    const path = require('path')
+    const path = require('path');
     const router = express.Router();
     const fxp = require('fast-xml-parser');
     let pool = require('../db/db');
@@ -52,6 +52,7 @@ module.exports = app => {
             let arr = [];
             arr = [...body.data.openid]
             console.log('arr :', arr);
+            return arr
         });
     }
 
@@ -134,7 +135,7 @@ module.exports = app => {
                 }
             }
 
-            request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${configJson.token.access_token}&openid=${xml2json.xml.FromUserName}&lang=zh_CN`, (error, response, body) => {
+            request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${json.token.access_token}&openid=${xml2json.xml.FromUserName}&lang=zh_CN`, (error, response, body) => {
                 let bd = JSON.parse(body);
                 let userData = [bd.subscribe, bd.openid, bd.nickname, bd.sex, bd.city, bd.country, bd.province, bd.language,
                 bd.headimgurl, bd.subscribe_time, bd.unionid, bd.remark, bd.groupid, bd.tagid_list.toString(), bd.subscribe_scene, bd.qr_scene, bd.qr_scene_str];
@@ -242,7 +243,7 @@ module.exports = app => {
     router.post('/sendMsg', (req, res) => {
         let opid = 'xxxx';   // openid
         let jsons = getToken();
-        request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${configJson.token.access_token}&openid=${opid}&lang=zh_CN`, (error, response, body) => {
+        request(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${jsons.token.access_token}&openid=${opid}&lang=zh_CN`, (error, response, body) => {
             let bd = JSON.parse(body);
             console.log('bd.subscribe :', bd.subscribe);
             if (bd.subscribe == 1) {
